@@ -56,98 +56,102 @@
 
 // export { Input };
 
+// import React, { useState, useEffect } from "react";
+// import { Controller } from "react-hook-form";
+// import { cn } from "../../../lib/cn";
 
-import React, { useState, useEffect } from "react";
-import { Controller } from "react-hook-form";
-// import { EyeHide, EyeShow, XOctagon } from "../../../assets/icons"; // Убедитесь в корректности пути
-import { cn } from "../../../lib/cn";
-import { inputVariants } from "../lib/inputVariants";
+// export interface InputWithHookFormProps {
+//   name: string;
+//   control?: any;
+//   rules?: any;
+//   errors?: any;
+//   inputPlaceholder?: string;
+//   inputType?: string;
+//   isPassword?: boolean;
+//   togglePasswordVisibility?: (visible: boolean) => void;
+//   className?: string;
+// }
 
-export interface InputWithHookFormProps {
-  name: string; // Название поля
-  control?: any; // Контроллер из `react-hook-form`
-  rules?: any; // Правила валидации
-  errors?: any; // Объект ошибок
-  inputPlaceholder?: string; // Плейсхолдер
-  inputType?: string; // Тип инпута (например, `text`, `password`)
-  isPassword?: boolean; // Является ли поле паролем
-  togglePasswordVisibility?: (visible: boolean) => void; // Переключение видимости пароля
-  className?: string; // Дополнительные классы
-}
+// const Input: React.FC<InputWithHookFormProps> = ({
+//   name,
+//   control,
+//   rules,
+//   errors,
+//   inputPlaceholder,
+//   inputType = "text",
+//   isPassword = false,
+//   togglePasswordVisibility,
+//   className,
+// }) => {
+//   const [showPassword, setShowPassword] = useState(false);
 
-const Input: React.FC<InputWithHookFormProps> = ({
-  name,
-  control,
-  rules,
-  errors,
-  inputPlaceholder,
-  inputType = "text",
-  isPassword = false,
-  togglePasswordVisibility,
-  className,
-}) => {
-  const [showPassword, setShowPassword] = useState(false);
-  // const [eyeIcon, setEyeIcon] = useState(<EyeHide />);
+//   useEffect(() => {}, [showPassword]);
 
-  // Меняем иконку в зависимости от видимости пароля
-  useEffect(() => {
-    // setEyeIcon(showPassword ? <EyeShow /> : <EyeHide />);
-  }, [showPassword]);
+//   const handleTogglePassword = () => {
+//     setShowPassword((prev) => !prev);
+//     if (togglePasswordVisibility) {
+//       togglePasswordVisibility(!showPassword);
+//     }
+//   };
 
-  const handleTogglePassword = () => {
-    setShowPassword((prev) => !prev);
-    if (togglePasswordVisibility) {
-      togglePasswordVisibility(!showPassword);
-    }
-  };
+//   return (
+//     <Controller
+//       name={name}
+//       control={control}
+//       rules={rules}
+//       render={({ field }) => (
+//         <div
+//           className={`relative flex flex-col w-full bg-white`}
+//           data-input-type={name}
+//         >
+//           {/* Input Field */}
+//           <input
+//             {...field}
+//             type={showPassword && isPassword ? "text" : inputType}
+//             placeholder={inputPlaceholder}
+//             className={cn(
+//               `peer px-4 py-4 rounded-md border border-black text-black
+//               text-lg font-medium outline-none transition-all
+//               focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+//               bg-transparent`,
+//               errors?.[name] && `border-red-500 text-red-500`,
+//               className
+//             )}
+//           />
 
-  return (
-    <Controller
-      name={name}
-      control={control}
-      rules={rules}
-      render={({ field }) => (
-        <div className="relative w-full">
-          <input
-            {...field}
-            type={showPassword && isPassword ? "text" : inputType}
-            placeholder={inputPlaceholder}
-            className={cn(
-              inputVariants({ size: "md", variant: "default" }),
-              "peer w-full placeholder-transparent focus:outline-none",
-              isPassword && "pr-10", // Для кнопки показа пароля
-              errors?.[name] && "border-red-500", // Ошибки подсвечиваются
-              className
-            )}
-          />
-          <label
-            className={cn(
-              "absolute left-3 top-2 text-gray-400 bg-white px-1 transition-all",
-              "peer-placeholder-shown:opacity-0 peer-placeholder-shown:invisible",
-              "peer-focus:opacity-100 peer-focus:visible peer-focus:top-[-10px] peer-focus:text-sm peer-focus:text-black"
-            )}
-          >
-            {inputPlaceholder}
-          </label>
-          {errors?.[name] && (
-            <div className="absolute left-3 top-full mt-1 text-red-500 flex items-center gap-1">
-              {/* <XOctagon className="h-4 w-4" /> */}
-              <span>{errors[name]?.message}</span>
-            </div>
-          )}
-          {isPassword && (
-            <button
-              type="button"
-              onClick={handleTogglePassword}
-              className="absolute right-3 top-2"
-            >
-              {/* {eyeIcon} */}
-            </button>
-          )}
-        </div>
-      )}
-    />
-  );
-};
+//           {/* Label */}
+//           <span
+//             className={`absolute -top-2 left-4 px-2 text-sm text-gray-500
+//               bg-white transition-all peer-placeholder-shown:opacity-0
+//               peer-placeholder-shown:invisible peer-focus:visible
+//               peer-focus:opacity-100 peer-focus:-top-5`}
+//           >
+//             {name}
+//           </span>
 
-export default Input;
+//           {/* Error Message */}
+//           {errors?.[name] && (
+//             <div className="text-red-500 text-sm mt-2">
+//               {errors[name]?.message}
+//             </div>
+//           )}
+
+//           {/* Password Toggle */}
+//           {isPassword && (
+//             <button
+//               type="button"
+//               onClick={handleTogglePassword}
+//               className="absolute right-4 top-4 text-gray-500"
+//             >
+//               {/* Добавьте иконки сюда */}
+//               {showPassword ? "👁️" : "🙈"}
+//             </button>
+//           )}
+//         </div>
+//       )}
+//     />
+//   );
+// };
+
+// export default Input;
+
