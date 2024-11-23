@@ -1,7 +1,7 @@
 import { cva, type VariantProps } from 'class-variance-authority';
 
-export const inputVariants = cva(
-  'w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-1 transition',
+export const InputVariants = cva(
+  'w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-1 transition',
   {
     variants: {
       size: {
@@ -10,7 +10,7 @@ export const inputVariants = cva(
         lg: 'h-12 px-4 text-base',
       },
       variant: {
-        default: 'border-gray-300 focus:ring-gray-500',
+        default: 'border-input focus:ring-ring colo',
         outline: 'border-2 border-blue-500 focus:ring-blue-600',
         error: 'border-red-500 text-red-600 focus:ring-red-600',
       },
@@ -22,4 +22,4 @@ export const inputVariants = cva(
   }
 );
 
-export type InputVariants = VariantProps<typeof inputVariants>;
+export type inputTypes = VariantProps<typeof InputVariants>;

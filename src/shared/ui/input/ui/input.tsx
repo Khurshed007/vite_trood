@@ -1,157 +1,113 @@
-// import * as React from "react";
-// import {  VariantProps } from "class-variance-authority";
+import React, { useRef, useState } from "react";
+import { type VariantProps } from "class-variance-authority";
+import { InputVariants } from "../lib/InputVariants"; // Path to your `InputVariants`
+import { boolean } from "zod";
 
+interface InputProps extends VariantProps<typeof InputVariants> {
+  id: string;
+  dynamicText?: string; // Optional dynamic label text
+  type?: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
+  placeholder?: string; // Placeholder to display when no dynamicText
+  isError 
+}
 
-// import { cn } from "../../../lib/cn";
-// import { inputVariants } from "../lib/inputVariants";
+interface DynamicTextProps {
+  isFocused: boolean;
+  isFilled: boolean;
+  dynamicText: string;
+  handleFocus: () => void; // Modified type
+}
 
-// // Типизация пропсов для Input
-// export interface InputProps
-//   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size">,
-//     VariantProps<typeof inputVariants> {
-//   startIcon?: React.ReactNode; // Иконка слева
-//   endIcon?: React.ReactNode; // Иконка справа
-//   label?: string; // Метка для input
-// }
+const DynamicText: React.FC<DynamicTextProps> = ({
+  isFocused,
+  isFilled,
+  dynamicText,
+  handleFocus,
+  isError 
+}) => {
+  return (
+    <span
+      onClick={handleFocus} // Correctly sets focus to the input
+      className={`absolute left-4 top-2.5 text-gray-500 bg-white px-1 transition-all
+        ${
+          isFocused || isFilled
+            ? "top-[-10px] text-sm text-blue-500"
+            : "top-2.5 text-base text-gray-400"
 
-// const Input = React.forwardRef<HTMLInputElement, InputProps>(
-//   ({ className, variant, size, startIcon, endIcon, label, ...props }, ref) => {
-//     return (
-//       <div className="relative w-full">
-//         <div className="relative w-full">
-//           {/* Иконка слева */}
-//           {startIcon && <span className="absolute left-3 top-2">{startIcon}</span>}
-//           {/* Поле ввода */}
-//           <input
-//             ref={ref}
-//             className={cn(
-//               inputVariants({ variant, size }), // Применяем стили от class-variance-authority
-//               "peer w-full placeholder-transparent focus:outline-none", // Peer для связи с меткой
-//               startIcon && "pl-10", // Если есть startIcon — добавляем отступ
-//               endIcon && "pr-10", // Если есть endIcon — добавляем отступ
-//               className
-//             )}
-//             {...props}
-//           />
-//           {/* Метка */}
-//           {label && (
-//             <label
-//               className={cn(
-//                 "absolute left-3 top-2 bg-white px-1 text-gray-400 transition-all", // Базовые стили
-//                 "peer-focus:opacity-100 peer-focus:visible peer-focus:top-[-10px] peer-focus:left-2 peer-focus:text-sm peer-focus:text-black" // Стили для фокуса
-//               )}
-//             >
-//               {label}
-//             </label>
-//           )}
-//           {/* Иконка справа */}
-//           {endIcon && <span className="absolute right-3 top-2">{endIcon}</span>}
-//         </div>
-//       </div>
-//     );
-//   }
-// );
+            
+        }
+        
+        ${
+            isError &&
+              "text-red-500"
+       
+            }
+        `
+    
+    }
+    >
+      {dynamicText}
+    </span>
+  );
+};
 
-// Input.displayName = "Input";
+const Input: React.FC<InputProps> = ({
+  id,
+  dynamicText,
+  type = "text",
+  value,
+  onChange,
+  onFocus,
+  onBlur,
+  placeholder = "",
+  size,
+  variant,
+  isError
+}) => {
+  const [isFocused, setIsFocused] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null); // Reference to the input element
 
-// export { Input };
+  const handleFocus = () => {
+    setIsFocused(true);
+    inputRef.current?.focus(); // Set focus to the input element
+    if (onFocus) onFocus();
+  };
 
-// import React, { useState, useEffect } from "react";
-// import { Controller } from "react-hook-form";
-// import { cn } from "../../../lib/cn";
+  const handleBlur = () => {
+    setIsFocused(false);
+    if (onBlur) onBlur();
+  };
 
-// export interface InputWithHookFormProps {
-//   name: string;
-//   control?: any;
-//   rules?: any;
-//   errors?: any;
-//   inputPlaceholder?: string;
-//   inputType?: string;
-//   isPassword?: boolean;
-//   togglePasswordVisibility?: (visible: boolean) => void;
-//   className?: string;
-// }
+  const isFilled = value !== "";
 
-// const Input: React.FC<InputWithHookFormProps> = ({
-//   name,
-//   control,
-//   rules,
-//   errors,
-//   inputPlaceholder,
-//   inputType = "text",
-//   isPassword = false,
-//   togglePasswordVisibility,
-//   className,
-// }) => {
-//   const [showPassword, setShowPassword] = useState(false);
+  return (
+    <div className="relative w-full">
+      <input
+        id={id}
+        ref={inputRef} // Attach the ref to the input element
+        value={value}
+        placeholder={!dynamicText ? placeholder : isFocused ? placeholder : ""} // Show placeholder only when dynamicText is absent or input is focused
+        type={type}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        onChange={onChange}
+        className={InputVariants({ size, variant })} // Apply styles from `InputVariants`
+      />
+      {dynamicText && (
+        <DynamicText
+          isFocused={isFocused}
+          isFilled={isFilled}
+          dynamicText={dynamicText}
+          handleFocus={handleFocus} // Use the same handler to focus the input
+          isError = {isError }
+        />
+      )}
+    </div>
+  );
+};
 
-//   useEffect(() => {}, [showPassword]);
-
-//   const handleTogglePassword = () => {
-//     setShowPassword((prev) => !prev);
-//     if (togglePasswordVisibility) {
-//       togglePasswordVisibility(!showPassword);
-//     }
-//   };
-
-//   return (
-//     <Controller
-//       name={name}
-//       control={control}
-//       rules={rules}
-//       render={({ field }) => (
-//         <div
-//           className={`relative flex flex-col w-full bg-white`}
-//           data-input-type={name}
-//         >
-//           {/* Input Field */}
-//           <input
-//             {...field}
-//             type={showPassword && isPassword ? "text" : inputType}
-//             placeholder={inputPlaceholder}
-//             className={cn(
-//               `peer px-4 py-4 rounded-md border border-black text-black
-//               text-lg font-medium outline-none transition-all
-//               focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-//               bg-transparent`,
-//               errors?.[name] && `border-red-500 text-red-500`,
-//               className
-//             )}
-//           />
-
-//           {/* Label */}
-//           <span
-//             className={`absolute -top-2 left-4 px-2 text-sm text-gray-500
-//               bg-white transition-all peer-placeholder-shown:opacity-0
-//               peer-placeholder-shown:invisible peer-focus:visible
-//               peer-focus:opacity-100 peer-focus:-top-5`}
-//           >
-//             {name}
-//           </span>
-
-//           {/* Error Message */}
-//           {errors?.[name] && (
-//             <div className="text-red-500 text-sm mt-2">
-//               {errors[name]?.message}
-//             </div>
-//           )}
-
-//           {/* Password Toggle */}
-//           {isPassword && (
-//             <button
-//               type="button"
-//               onClick={handleTogglePassword}
-//               className="absolute right-4 top-4 text-gray-500"
-//             >
-//               {/* Добавьте иконки сюда */}
-//               {showPassword ? "👁️" : "🙈"}
-//             </button>
-//           )}
-//         </div>
-//       )}
-//     />
-//   );
-// };
-
-// export default Input;
-
+export { Input, DynamicText };
